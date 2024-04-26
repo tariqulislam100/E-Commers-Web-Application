@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Online Gorur Haat</title>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+        #title{
+            margin: 20px;
+            padding: 20px;
+            background-color: #212121;
+            color: white;
+            display: inline-block;
+        }
+        #district{
+            width: 280px;
+            height: 30px;
+        }
+        #hBtn{
+            margin: 5px;
+            padding: 5px;
+            background-color: #212121;
+            color: white;
+			width: 100px;
+            height: 30px;
+        }
+		table{
+			width: 50%;
+		}
+		thead{
+            font-weight: bold;
+        }
+    </style>
+  </head>
+  <body>
+    <div class="navbar">
+      <h2>Online Gorur Haat</h2>
+      <div class="main-nav">
+        <a href="index.html">Home</a>
+        <a href="localstorage.html">Local Storage</a>
+        <a href="sessionstorage.html">Session Storage</a>
+        <a href="indexedDB.html">IndexedDB</a>
+      </div>
+    </div>
+    
+    <div align="center" style="width: 100%;margin: auto; padding:50px;">
+		<h2 id="title">Local Storage</h2>
+    
+<form>
+	<h2>Enter Your Home District</h2>
+	<input type="text" id="district" placeholder="Enter Your District"><br /><br />
+	<input type="button" id="hBtn" value="Submit" onclick='manageData()'>
+</form><br />
+<div id="msg"></div><br />
+<h2>District List</h2>
+<table border="1">
+	<thead>
+		<tr>
+			<td>S.No</td>
+			<td>District</td>
+			<td>Action</td>
+		</tr>
+	<thead>
+	<tbody id="root">
+	
+	<tbody>
+</table>
+    </div>
+  </body>
+  <script>
+    let id="no";
+selectData();
+function manageData(){
+	document.getElementById('msg').innerHTML="";
+	let district=document.getElementById('district').value;
+	if(district==''){
+		document.getElementById('msg').innerHTML='Please enter your district';
+	}else{
+		console.log(id);
+		if(id=='no'){
+			let arr=getCrudData();
+			if(arr==null){
+				let data=[district];
+				setCrudData(data);
+			}else{
+				arr.push(district);
+				setCrudData(arr);
+			}
+			document.getElementById('msg').innerHTML='Data added';
+		}else{
+			let arr=getCrudData();
+			arr[id]=district;
+			setCrudData(arr);
+			document.getElementById('msg').innerHTML='Data updated';
+		}
+		document.getElementById('district').value='';
+		selectData();
+	}
+}
+function selectData(){
+	let arr=getCrudData();
+	if(arr!=null){
+		let html='';
+		let sno=1;
+		for(let k in arr){
+			html=html+`<tr><td>${sno}</td><td>${arr[k]}</td><td><a href="javascript:void(0)" onclick="editData(${k})">Edit</a>&nbsp;<a href="javascript:void(0)" onclick="deleteData(${k})">Delete</a></td></tr>`;
+			sno++;
+		}
+		document.getElementById('root').innerHTML=html;		
+	}
+}
+function editData(rid){
+	id=rid;
+	let arr=getCrudData();
+	document.getElementById('district').value=arr[rid];
+}
+function deleteData(rid){
+	let arr=getCrudData();
+	arr.splice(rid,1);
+	setCrudData(arr);
+	selectData();
+}
+function getCrudData(){
+	let arr=JSON.parse(localStorage.getItem('crud'));
+	return arr;
+}
+function setCrudData(arr){
+	localStorage.setItem('crud',JSON.stringify(arr));
+}
+</script>
+<script src="main.js"></script>
+</html>

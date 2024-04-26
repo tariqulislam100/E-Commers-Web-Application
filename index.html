@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Online Gorur Haat</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="navbar">
+        <h2>Online Gorur Haat</h2>
+        <div class="main-nav">
+            <a href="index.html">Home</a>
+            <a href="localstorage.html">Local Storage</a>
+            <a href="sessionstorage.html">Session Storage</a>
+            <a href="indexedDB.html">IndexedDB</a>
+            <a href="cart.html" id="itemCount">Cart 0</a>
+        </div>
+        <input type="text" name="search" id="search" onkeyup="search()" placeholder="Search">
+    </div>
+    <div class="uploadProduct" id="uploadProduct">
+        <div>Product Upload</div>
+        <form>
+            <input type="text" name="productname" id="podName" placeholder="Product Name">
+            <input type="number" name="price" id="podPrice" placeholder="Price">
+            <input type="file" name="image" id="podImage" accept="image/*" required>
+            <button type="button" onclick="submitProduct()">Submit</button>
+        </form>
+    </div>
+    <div class="shop" id="shop">
+    
+    </div>
+    <footer>
+        <div>Copyright by <a href="index.html">GorurHaat.com</a></div>
+        <div>Design tushar.</div>
+    </footer>
+</body>
+<script src="main.js"></script>
+</html>

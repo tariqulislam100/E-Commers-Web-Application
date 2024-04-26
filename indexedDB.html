@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Online Gorur Haat</title>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      #title {
+        margin: 20px;
+        padding: 20px;
+        background-color: #212121;
+        color: white;
+        display: inline-block;
+      }
+      #productName,
+      #productPrice {
+        width: 205px;
+        height: 30px;
+      }
+      button {
+        background-color: #212121;
+        color: white;
+        margin: 5px;
+        padding: 5px;
+      }
+      table {
+        width: 50%;
+      }
+      thead {
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body onload="readProducts()">
+    <div class="navbar">
+      <h2>Online Gorur Haat</h2>
+      <div class="main-nav">
+        <a href="index.html">Home</a>
+        <a href="localstorage.html">Local Storage</a>
+        <a href="sessionstorage.html">Session Storage</a>
+        <a href="indexedDB.html">IndexedDB</a>
+      </div>
+    </div>
+
+    <div align="center" style="width: 100%; margin: auto; padding: 50px">
+      <h2 id="title">IndexedDB</h2>
+      <h2>Product Name</h2>
+      <input
+        type="text"
+        id="productName"
+        placeholder="product Name"
+      /><br /><br />
+      <h2>Product Price</h2>
+      <input
+        type="number"
+        id="productPrice"
+        placeholder="product Price"
+      /><br /><br />
+      <button onclick="addProduct()">Add Product</button>
+      <button onclick="readProducts()">Read Products</button><br />
+      <ul id="productList"></ul>
+      <h2>Product List</h2>
+      <table border="1">
+        <thead>
+          <tr>
+            <td>S.No</td>
+            <td>Product Name</td>
+            <td>Product Price</td>
+          </tr>
+        </thead>
+        <tbody id="root"></tbody>
+      </table>
+    </div>
+  </body>
+  <script>
+    var db;
+    var request = indexedDB.open("ProductDB", 1);
+    request.onerror = function (event) {
+      console.error("Error opening database:", event.target.error);
+    };
+    request.onupgradeneeded = function (event) {
+      db = event.target.result;
+      var objectStore = db.createObjectStore("products", {
+        keyPath: "id",
+        autoIncrement: true,
+      });
+      objectStore.createIndex("name", "name", { unique: false });
+      objectStore.createIndex("price", "price", { unique: false });
+    };
+    request.onsuccess = function (event) {
+      db = event.target.result;
+    };
+    function addProduct() {
+      var transaction = db.transaction(["products"], "readwrite");
+      var objectStore = transaction.objectStore("products");
+      var productName = document.getElementById("productName").value;
+      var productPrice = document.getElementById("productPrice").value;
+      if (productName == "" || !productPrice) {
+        alert("Must Fill All Data");
+        return;
+      }
+      var request = objectStore.add({ name: productName, price: productPrice });
+      request.onsuccess = function (event) {
+        console.log("Product added to the database.");
+      };
+      request.onerror = function (event) {
+        console.error("Error adding product:", event.target.error);
+      };
+      document.getElementById("productName").value = "";
+      document.getElementById("productPrice").value = "";
+    }
+    function readProducts() {
+      var i = 1;
+      var transaction = db.transaction(["products"], "readonly");
+      var objectStore = transaction.objectStore("products");
+      var productList = document.getElementById("root");
+      productList.innerHTML = "";
+      objectStore.openCursor().onsuccess = function (event) {
+        var cursor = event.target.result;
+        if (cursor) {
+          productList.innerHTML =
+            productList.innerHTML +
+            `<tr><td>${i}</td><td>${cursor.value.name}</td><td>${cursor.value.price}</td></tr>`;
+          i++;
+          cursor.continue();
+        }
+      };
+    }
+  </script>
+</html>
